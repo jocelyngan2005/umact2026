@@ -1,0 +1,58 @@
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+.Python
+
+# ── Virtual environments ───────────────────────────────────────────────────────
+.venv/
+venv/
+env/
+ENV/
+.env
+
+# ── Jupyter ────────────────────────────────────────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# ── Data files (large / sensitive) ────────────────────────────────────────────
+streamlit_app/data/*.csv
+streamlit_app/data/*.xlsx
+streamlit_app/data/*.parquet
+streamlit_app/data/*.json
+# keep the placeholder so the folder is tracked
+!streamlit_app/data/.gitkeep
+
+# ── ML model binaries ─────────────────────────────────────────────────────────
+streamlit_app/models/*.pkl
+streamlit_app/models/*.joblib
+streamlit_app/models/*.h5
+streamlit_app/models/*.pt
+streamlit_app/models/*.onnx
+!streamlit_app/models/.gitkeep
+
+# ── Streamlit ─────────────────────────────────────────────────────────────────
+streamlit_app/.streamlit/secrets.toml
+
+# ── OS / editor ───────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# ── Build / dist ──────────────────────────────────────────────────────────────
+dist/
+build/
+*.egg-info/
+.eggs/
+site/
+
+# ── Coverage / test artefacts ─────────────────────────────────────────────────
+.coverage
+.pytest_cache/
+htmlcov/
