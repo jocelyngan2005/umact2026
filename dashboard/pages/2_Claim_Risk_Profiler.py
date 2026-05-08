@@ -24,14 +24,6 @@ inject_css()
 
 # ─── Sidebar ─────────────────────────────────────────────────────────────────
 with st.sidebar:
-    st.markdown(
-        "<div style='font-size:0.95rem;font-weight:700;color:#111827;"
-        "letter-spacing:-0.01em;'>MHIT Intelligence</div>"
-        "<div style='font-size:0.7rem;color:#9CA3AF;margin-top:2px;"
-        "text-transform:uppercase;letter-spacing:0.07em;'>UMACT 2026 · BUZHIDAO</div>",
-        unsafe_allow_html=True,
-    )
-    st.divider()
     st.markdown("**About the models**")
     st.caption(
         "**Severity model:** Lognormal OLS with DRG, region, hospital type, "
@@ -49,30 +41,48 @@ severity_model, kmeans, scaler = load_models()
 models_loaded = severity_model is not None
 
 # ─── Header ──────────────────────────────────────────────────────────────────
-st.markdown("<div class='page-header'>🎯 Claim Risk Profiler</div>", unsafe_allow_html=True)
 st.markdown(
-    "<div class='page-sub'>Enter a patient profile below to receive an instant "
-    "risk assessment, cluster assignment, and expected claim prediction.</div>",
+    """
+    <div style="margin-bottom: 1.8rem; padding-bottom: 1.4rem;
+                border-bottom: 1px solid #E5E7EB;">
+        <div style="font-size:0.68rem; font-weight:700; color:#ABABAB;
+                    text-transform:uppercase; letter-spacing:0.1em;
+                    margin-bottom:0.5rem;">
+            UMACT Hackathon 2026 · Finals Submission
+        </div>
+        <div style="font-size:2rem; font-weight:700; color:#0A0A0A;
+                    line-height:1.2; margin-bottom:0.55rem;
+                    letter-spacing:-0.025em;">
+            Claim Risk Profiler
+        </div>
+        <div style="font-size:0.9rem; color:#6B7280; line-height:1.6;">
+            Enter a patient profile below to receive an instant risk assessment,
+            cluster assignment, and expected claim prediction.
+        </div>
+    </div>
+    """,
     unsafe_allow_html=True,
 )
 
 if models_loaded:
     st.markdown(
-        "<div class='model-banner ok'>✅ ML models are active — "
+        "<div class='model-banner ok'><span class='material-symbols-outlined' "
+        "style='font-size:1rem;vertical-align:middle;margin-right:0.3rem;'>check_circle</span>"
+        "ML models are active — "
         "predictions use the trained Lognormal OLS + K-Means pipeline.</div>",
         unsafe_allow_html=True,
     )
 else:
     st.markdown(
-        "<div class='model-banner warn'>⚠️ ML model files not found in <code>models/</code>. "
+        "<div class='model-banner warn'><span class='material-symbols-outlined' "
+        "style='font-size:1rem;vertical-align:middle;margin-right:0.3rem;'>warning</span>"
+        "ML model files not found in <code>models/</code>. "
         "Showing benchmark-based estimates. See the sidebar for export instructions.</div>",
         unsafe_allow_html=True,
     )
 
-st.divider()
-
 # ─── Input Form + Results ─────────────────────────────────────────────────────
-col_form, col_results = st.columns([2, 3], gap="large")
+col_form, col_results = st.columns([2, 3], gap="large", vertical_alignment="top")
 
 with col_form:
     st.markdown("<div class='section-title'>Patient Profile</div>", unsafe_allow_html=True)
@@ -101,6 +111,11 @@ with col_form:
         )
 
 with col_results:
+    # invisible spacer — same height as the 'Patient Profile' section-title on the left
+    st.markdown(
+        "<div class='section-title' style='visibility:hidden;'>_</div>",
+        unsafe_allow_html=True,
+    )
     if not submitted:
         st.markdown(
             f"""<div style="
@@ -109,7 +124,9 @@ with col_results:
                 border: 2px dashed {BRAND['mid']}; border-radius: 14px;
                 color:{BRAND['gray']}; text-align:center; padding: 2rem;
             ">
-                <div style="font-size:3rem;margin-bottom:1rem;">🎯</div>
+                <div style="margin-bottom:1rem;">
+                    <span class='material-symbols-outlined' style='font-size:3rem;'>target</span>
+                </div>
                 <div style="font-size:1rem;font-weight:600;">Fill in the patient profile</div>
                 <div style="font-size:0.85rem;margin-top:0.5rem;">
                     and click <b>Score This Patient</b> to see<br>

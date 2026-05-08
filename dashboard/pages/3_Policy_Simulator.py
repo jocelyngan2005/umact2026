@@ -25,14 +25,6 @@ inject_css()
 
 # ─── Sidebar ─────────────────────────────────────────────────────────────────
 with st.sidebar:
-    st.markdown(
-        "<div style='font-size:0.95rem;font-weight:700;color:#111827;"
-        "letter-spacing:-0.01em;'>MHIT Intelligence</div>"
-        "<div style='font-size:0.7rem;color:#9CA3AF;margin-top:2px;"
-        "text-transform:uppercase;letter-spacing:0.07em;'>UMACT 2026 · BUZHIDAO</div>",
-        unsafe_allow_html=True,
-    )
-    st.divider()
     st.markdown("**Scenario Definitions**")
     st.caption(
         "**Base MHIT:** 20% co-pay, RM 3,000 cap.\n\n"
@@ -57,10 +49,26 @@ df = df_full[
 ].copy()
 
 # ─── Header ──────────────────────────────────────────────────────────────────
-st.markdown("<div class='page-header'>⚖️ Policy Co-Payment Simulator</div>", unsafe_allow_html=True)
 st.markdown(
-    "<div class='page-sub'>Interactively compare co-payment structures and their financial "
-    "impact on both patients and the insurer — in real time.</div>",
+    """
+    <div style="margin-bottom: 1.8rem; padding-bottom: 1.4rem;
+                border-bottom: 1px solid #E5E7EB;">
+        <div style="font-size:0.68rem; font-weight:700; color:#ABABAB;
+                    text-transform:uppercase; letter-spacing:0.1em;
+                    margin-bottom:0.5rem;">
+            UMACT Hackathon 2026 · Finals Submission
+        </div>
+        <div style="font-size:2rem; font-weight:700; color:#0A0A0A;
+                    line-height:1.2; margin-bottom:0.55rem;
+                    letter-spacing:-0.025em;">
+            Policy Co-Payment Simulator
+        </div>
+        <div style="font-size:0.9rem; color:#6B7280; line-height:1.6;">
+            Interactively compare co-payment structures and their financial
+            impact on both patients and the insurer — in real time.
+        </div>
+    </div>
+    """,
     unsafe_allow_html=True,
 )
 
@@ -145,7 +153,7 @@ for col, (name, cfg) in zip(cols, scenarios.items()):
     with col:
         st.markdown(
             f"""<div class="policy-card {rec_class}">
-                <div class="pc-name">{'⭐ ' if cfg['recommended'] else ''}{name}</div>
+                <div class="pc-name">{name}{' (Recommended)' if cfg['recommended'] else ''}</div>
                 <div class="pc-amount">{fmt_rm(insurer_total)}</div>
                 <div class="pc-savings">{cfg['description']}</div>
                 <div class="pc-savings" style="color:{'#10B981' if savings>0 else '#EF4444'}">
@@ -266,7 +274,7 @@ for name, cfg in scenarios.items():
     ip = df[cfg["insurer_col"]]
     savings = base_liability - ip.sum()
     rows.append({
-        "Scenario": f"{'⭐ ' if cfg['recommended'] else ''}{name}",
+        "Scenario": f"{name}{' (Recommended)' if cfg['recommended'] else ''}",
         "Total Insurer Liability": fmt_rm(ip.sum()),
         "Savings vs Base MHIT": fmt_rm(savings) if name != "Base MHIT" else "—",
         "Savings %": f"{savings/base_liability*100:.2f}%" if name != "Base MHIT" else "—",
@@ -278,7 +286,7 @@ for name, cfg in scenarios.items():
 st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
 
 # ─── Insight Callout ────────────────────────────────────────────────────────
-with st.expander("📌 Key Findings from the Policy Analysis"):
+with st.expander(":material/lightbulb: Key Findings from the Policy Analysis"):
     b_saves = df["base_mhit_insurer_pays"].sum() - df["alt_b_insurer_pays"].sum()
     a_saves = df["base_mhit_insurer_pays"].sum() - df["alt_a_insurer_pays"].sum()
     st.markdown(f"""

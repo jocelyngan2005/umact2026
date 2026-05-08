@@ -287,16 +287,15 @@ def fmt_pct(val: float) -> str:
 
 SHARED_CSS = """
 <style>
-    /* ── Hide Streamlit chrome ── */
-    header[data-testid="stHeader"] { display: none !important; }
-    #MainMenu { visibility: hidden !important; }
-    .stDeployButton { display: none !important; }
+    @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:FILL@0');
+
+    /* ── Streamlit chrome cleanup ── */
     footer { visibility: hidden !important; }
 
     /* ── Global surface ── */
     .stApp { background-color: #FAFAFA !important; }
     .block-container {
-        padding-top: 2rem !important;
+        padding-top: 5rem !important;
         padding-bottom: 2rem !important;
         max-width: 1280px;
     }
@@ -311,7 +310,41 @@ SHARED_CSS = """
         padding-top: 1.5rem !important;
     }
 
+    /* ── Sidebar nav — hide any auto-generated section label ── */
+    [data-testid="stSidebarNavSeparator"] { display: none !important; }
+    section[data-testid="stSidebar"] nav [data-testid="stSidebarNavItems"] > div:first-child > span {
+        display: none !important;
+    }
+
+    /* ── Filter inputs — distinct from white sidebar background ── */
+    section[data-testid="stSidebar"] [data-baseweb="input"] input,
+    section[data-testid="stSidebar"] [data-baseweb="select"] > div,
+    section[data-testid="stSidebar"] [data-baseweb="textarea"] textarea {
+        background-color: #EAECF0 !important;
+        border: 1px solid #C4C8D0 !important;
+    }
+    section[data-testid="stSidebar"] .stMultiSelect [data-baseweb="select"] > div {
+        background-color: #EAECF0 !important;
+        border: 1px solid #C4C8D0 !important;
+    }
+    section[data-testid="stSidebar"] .stMultiSelect [data-baseweb="tag"] {
+        background-color: #D1D5DB !important;
+        color: #111827 !important;
+    }
+
     /* ── Typography ── */
+    .material-symbols-outlined {
+        font-family: 'Material Symbols Outlined';
+        font-weight: normal;
+        font-style: normal;
+        line-height: 1;
+        letter-spacing: normal;
+        text-transform: none;
+        display: inline-block;
+        white-space: nowrap;
+        word-wrap: normal;
+        direction: ltr;
+    }
     .page-header {
         font-size: 1.5rem; font-weight: 700;
         color: #0A0A0A; margin-bottom: 0.15rem;

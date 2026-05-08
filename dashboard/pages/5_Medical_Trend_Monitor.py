@@ -24,14 +24,6 @@ inject_css()
 
 # ─── Sidebar ─────────────────────────────────────────────────────────────────
 with st.sidebar:
-    st.markdown(
-        "<div style='font-size:0.95rem;font-weight:700;color:#111827;"
-        "letter-spacing:-0.01em;'>MHIT Intelligence</div>"
-        "<div style='font-size:0.7rem;color:#9CA3AF;margin-top:2px;"
-        "text-transform:uppercase;letter-spacing:0.07em;'>UMACT 2026 · BUZHIDAO</div>",
-        unsafe_allow_html=True,
-    )
-    st.divider()
     st.markdown("**Filters**")
     sel_drg = st.multiselect("DRG Category", DRG_CATEGORIES, default=DRG_CATEGORIES)
     sel_regions = st.multiselect("Region", REGIONS, default=REGIONS)
@@ -47,10 +39,26 @@ df = df_full[
 ].copy()
 
 # ─── Header ──────────────────────────────────────────────────────────────────
-st.markdown("<div class='page-header'>📅 Medical Trend Monitor</div>", unsafe_allow_html=True)
 st.markdown(
-    "<div class='page-sub'>Quarterly claim volume and severity trends (2023–2025), "
-    "per-DRG cost trajectories, and seasonal patterns.</div>",
+    """
+    <div style="margin-bottom: 1.8rem; padding-bottom: 1.4rem;
+                border-bottom: 1px solid #E5E7EB;">
+        <div style="font-size:0.68rem; font-weight:700; color:#ABABAB;
+                    text-transform:uppercase; letter-spacing:0.1em;
+                    margin-bottom:0.5rem;">
+            UMACT Hackathon 2026 · Finals Submission
+        </div>
+        <div style="font-size:2rem; font-weight:700; color:#0A0A0A;
+                    line-height:1.2; margin-bottom:0.55rem;
+                    letter-spacing:-0.025em;">
+            Medical Trend Monitor
+        </div>
+        <div style="font-size:0.9rem; color:#6B7280; line-height:1.6;">
+            Quarterly claim volume and severity trends (2023–2025),
+            per-DRG cost trajectories, and seasonal patterns.
+        </div>
+    </div>
+    """,
     unsafe_allow_html=True,
 )
 
@@ -73,6 +81,9 @@ quarterly["claim_growth"] = quarterly["avg_claim"].pct_change() * 100
 quarterly["volume_growth"] = quarterly["claim_count"].pct_change() * 100
 
 # ─── KPI Row ─────────────────────────────────────────────────────────────────
+_ICO_UP   = "<span class='material-symbols-outlined' style='font-size:0.8rem;vertical-align:middle;'>trending_up</span>"
+_ICO_DOWN = "<span class='material-symbols-outlined' style='font-size:0.8rem;vertical-align:middle;'>trending_down</span>"
+
 if len(quarterly) >= 2:
     latest = quarterly.iloc[-1]
     prev = quarterly.iloc[-2]
@@ -83,11 +94,11 @@ if len(quarterly) >= 2:
     c1, c2, c3, c4 = st.columns(4)
     for col, (label, value, delta) in zip([c1, c2, c3, c4], [
         ("Latest Avg Claim", fmt_rm(latest["avg_claim"]),
-         f"{'▲' if claim_delta > 0 else '▼'} {fmt_rm(abs(claim_delta))} vs prev quarter"),
+         f"{_ICO_UP if claim_delta > 0 else _ICO_DOWN} {fmt_rm(abs(claim_delta))} vs prev quarter"),
         ("Latest Claim Volume", f"{latest['claim_count']:,}",
-         f"{'▲' if vol_delta > 0 else '▼'} {abs(int(vol_delta))} vs prev quarter"),
+         f"{_ICO_UP if vol_delta > 0 else _ICO_DOWN} {abs(int(vol_delta))} vs prev quarter"),
         ("Avg Length of Stay", f"{latest['avg_los']:.1f} days",
-         f"{'▲' if los_delta > 0 else '▼'} {abs(los_delta):.1f} vs prev quarter"),
+         f"{_ICO_UP if los_delta > 0 else _ICO_DOWN} {abs(los_delta):.1f} vs prev quarter"),
         ("Periods Analysed", f"{len(quarterly)}", "quarters of data"),
     ]):
         with col:

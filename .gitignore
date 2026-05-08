@@ -17,24 +17,11 @@ ENV/
 .ipynb_checkpoints/
 *.ipynb_checkpoints
 
-# ── Data files (large / sensitive) ────────────────────────────────────────────
-streamlit_app/data/*.csv
-streamlit_app/data/*.xlsx
-streamlit_app/data/*.parquet
-streamlit_app/data/*.json
-# keep the placeholder so the folder is tracked
-!streamlit_app/data/.gitkeep
-
-# ── ML model binaries ─────────────────────────────────────────────────────────
-streamlit_app/models/*.pkl
-streamlit_app/models/*.joblib
-streamlit_app/models/*.h5
-streamlit_app/models/*.pt
-streamlit_app/models/*.onnx
-!streamlit_app/models/.gitkeep
+# ── Competition assets ────────────────────────────────────────────────────────
+# Keep data and models tracked for submission requirements.
 
 # ── Streamlit ─────────────────────────────────────────────────────────────────
-streamlit_app/.streamlit/secrets.toml
+dashboard/.streamlit/secrets.toml
 
 # ── OS / editor ───────────────────────────────────────────────────────────────
 .DS_Store
