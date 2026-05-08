@@ -158,7 +158,7 @@ def load_models():
         pickle.dump(scaler, f)
     ═══════════════════════════════════════════════════════════════════════
     """
-    model_dir = Path("models")
+    model_dir = Path(__file__).parent / "models"
     paths = {
         "severity": model_dir / "severity_model_fmv.pkl",
         "kmeans": model_dir / "kmeans_model.pkl",
@@ -214,7 +214,7 @@ def load_and_engineer_data(uploaded_bytes: bytes | None = None) -> pd.DataFrame 
             parse_dates=["admission_date", "discharge_date"],
         )
     else:
-        data_path = Path("data/UMACT_HACKATHON_2026_CLEANED.csv")
+        data_path = Path(__file__).parent / "data" / "UMACT_HACKATHON_2026_CLEANED.csv"
         if not data_path.exists():
             return None
         df = pd.read_csv(data_path, parse_dates=["admission_date", "discharge_date"])
