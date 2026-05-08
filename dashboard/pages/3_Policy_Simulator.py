@@ -25,6 +25,10 @@ inject_css()
 
 # ─── Sidebar ─────────────────────────────────────────────────────────────────
 with st.sidebar:
+    st.markdown("**Filters**")
+    sel_plans = st.multiselect("Plan Type", PLAN_TYPES, default=PLAN_TYPES)
+    sel_regions = st.multiselect("Region", REGIONS, default=REGIONS)
+    st.divider()
     st.markdown("**Scenario Definitions**")
     st.caption(
         "**Base MHIT:** 20% co-pay, RM 3,000 cap.\n\n"
@@ -33,10 +37,6 @@ with st.sidebar:
         "**Alt B – Dynamic DRG:** Patient pays 10% of FMV benchmark + "
         "100% of any amount the hospital charges above the FMV."
     )
-    st.divider()
-    st.markdown("**Portfolio Filter**")
-    sel_plans = st.multiselect("Plan Type", PLAN_TYPES, default=PLAN_TYPES)
-    sel_regions = st.multiselect("Region", REGIONS, default=REGIONS)
 
 # ─── Data ────────────────────────────────────────────────────────────────────
 df_full = data_loader_widget()
