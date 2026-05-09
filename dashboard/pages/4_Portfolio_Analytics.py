@@ -16,7 +16,7 @@ import streamlit as st
 sys.path.insert(0, str(Path(__file__).parent.parent))
 from utils import (
     BRAND, DRG_COLOR_MAP, DRG_CATEGORIES, PLAN_TYPES, REGIONS,
-    fmt_rm, inject_css, data_loader_widget, load_models,
+    fmt_rm, inject_css, data_loader_widget, load_models, cluster_label_fallback,
 )
 
 inject_css()
@@ -40,6 +40,10 @@ df = df_full[
     & df_full["region"].isin(sel_regions)
     & df_full["hospital_tier"].isin(hospital_tier_filter)
 ].copy()
+
+# ─── Load ML Models for Clustering ───────────────────────────────────────────
+severity_model, kmeans, scaler = load_models()
+models_loaded = kmeans is not None
 
 # ─── Header ──────────────────────────────────────────────────────────────────
 st.markdown(
@@ -217,13 +221,37 @@ st.caption(
 st.markdown("<div class='section-title'>Patient Risk Cluster Profiling</div>",
             unsafe_allow_html=True)
 
-# Compute cluster columns from risk_score if ML labels not present
+if not models_loaded:
+    st.warning(
+        "⚠️ K-Means clustering model not loaded. Using rule-based clustering. "
+        "Drop model files in `models/` folder for ML-driven assignments.",
+        icon="⚠️"
+    )
+
+# Compute cluster assignments using trained K-Means if available
+if models_loaded and "risk_cluster" not in df.columns:
+    try:
+        features = df[["patient_age", "bmi", "chronic_conditions", "has_previous_claims"]].fillna(0)
+        X_scaled = scaler.transform(features)
+        df["risk_cluster"] = kmeans.predict(X_scaled)
+    except Exception as e:
+        st.warning(f"Could not compute K-Means clusters: {e}")
+
+# Map cluster numbers to meaningful labels
 if "risk_cluster" not in df.columns:
     bins = [0, 1.15, 1.40, 1.70, 2.00, 99]
     labels = ["0 – Young & Healthy", "1 – Low-Moderate", "2 – Moderate", "3 – High Risk", "4 – Very High"]
     df["risk_cluster_label"] = pd.cut(df["patient_risk_score"], bins=bins, labels=labels)
 else:
-    df["risk_cluster_label"] = "Cluster " + df["risk_cluster"].astype(str)
+    # Convert cluster numbers to descriptive labels based on ex-ante feature profiles
+    cluster_names = {
+        0: "Cluster 0 – High Risk (Older, Chronic)",
+        1: "Cluster 1 – Low-Moderate (Young w/ History)",
+        2: "Cluster 2 – Lowest Risk (Young & Healthy)",
+        3: "Cluster 3 – High Risk (Older, Chronic & Claims)",
+        4: "Cluster 4 – Moderate-High (High BMI)",
+    }
+    df["risk_cluster_label"] = df["risk_cluster"].map(lambda x: cluster_names.get(x, f"Cluster {x}"))
 
 col_scatter, col_profile = st.columns([3, 2])
 
@@ -276,7 +304,9 @@ with col_profile:
     cluster_profile["Avg Claim (RM)"] = cluster_profile["Avg Claim (RM)"].apply(fmt_rm)
     st.dataframe(cluster_profile, use_container_width=True, hide_index=True)
 
+    clustering_method = "**K-Means ML Model**" if models_loaded else "**Rule-Based Binning**"
     st.caption(
+        f"Clustering method: {clustering_method} • "
         "Bubble size in scatter = claim amount. "
         "Cluster separation is driven by age, BMI, chronic conditions, and prior claims."
     )
